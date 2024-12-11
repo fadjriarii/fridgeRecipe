@@ -3,6 +3,7 @@ import Navbar from './components/Navbar';
 import Home from './pages/Home';
 import Favorites from './pages/Favorites';
 import SignIn from './pages/SignIn';
+import RecipeDetails from './pages/RecipeDetails';
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/favorites" element={<Favorites />} />
             <Route path="/signin" element={<SignIn />} />
+            <Route path="/recipe/:id" element={<RecipeDetails />} />
           </Routes>
         </main>
       </div>

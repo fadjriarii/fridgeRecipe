@@ -1,6 +1,14 @@
 import PropTypes from 'prop-types';
 
-function RecipeCard({ recipe, onFavoriteClick, buttonText, buttonClassName }) {
+function RecipeCard({ 
+  recipe, 
+  onFavoriteClick, 
+  onViewDetailsClick,
+  buttonText, 
+  detailsButtonText,
+  buttonClassName,
+  detailsButtonClassName 
+}) {
   return (
     <div className="bg-white p-6 rounded-lg shadow-md">
       <img 
@@ -13,12 +21,20 @@ function RecipeCard({ recipe, onFavoriteClick, buttonText, buttonClassName }) {
         <p className="text-gray-600">Used Ingredients: {recipe.usedIngredientCount}</p>
         <p className="text-gray-600">Missed Ingredients: {recipe.missedIngredientCount}</p>
       </div>
-      <button 
-        className={`mt-4 w-full ${buttonClassName}`}
-        onClick={() => onFavoriteClick(recipe.id)}
-      >
-        {buttonText}
-      </button>
+      <div className="flex space-x-2">
+        <button 
+          className={`flex-1 ${buttonClassName}`}
+          onClick={() => onFavoriteClick(recipe.id)}
+        >
+          {buttonText}
+        </button>
+        <button 
+          className={`flex-1 ${detailsButtonClassName}`}
+          onClick={() => onViewDetailsClick(recipe.id)}
+        >
+          {detailsButtonText}
+        </button>
+      </div>
     </div>
   );
 }
@@ -32,8 +48,11 @@ RecipeCard.propTypes = {
     missedIngredientCount: PropTypes.number,
   }).isRequired,
   onFavoriteClick: PropTypes.func.isRequired,
+  onViewDetailsClick: PropTypes.func.isRequired,
   buttonText: PropTypes.string.isRequired,
+  detailsButtonText: PropTypes.string.isRequired,
   buttonClassName: PropTypes.string,
+  detailsButtonClassName: PropTypes.string,
 };
 
 export default RecipeCard;

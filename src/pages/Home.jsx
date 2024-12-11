@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom'; // Pastikan Anda sudah menginstall react-router-dom
 import SearchForm from '../components/SearchForm';
 import RecipeCard from '../components/RecipeCard';
 import { saveToLocalStorage, loadFromLocalStorage } from '../utils/localStorage';
@@ -7,6 +8,7 @@ const SPOONACULAR_API_KEY = import.meta.env.VITE_SPOONACULAR_API_KEY;
 const SPOONACULAR_BASE_URL = 'https://api.spoonacular.com/recipes/findByIngredients';
 
 function Home() {
+  const navigate = useNavigate(); // Hook untuk navigasi
   const [ingredients, setIngredients] = useState('');
   const [recipes, setRecipes] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -76,6 +78,10 @@ function Home() {
     }
   };
 
+  const handleViewRecipeDetails = (recipeId) => {
+    navigate(`/recipe/${recipeId}`); // Navigasi ke halaman detail resep
+  };
+
   return (
     <div className="max-w-2xl mx-auto p-4">
       <h1 className="text-3xl font-bold mb-8 text-center">Find Recipes with Your Ingredients</h1>
@@ -99,7 +105,7 @@ function Home() {
         </div>
       )}
 
-      {!loading && recipes.length > 0 && (
+{!loading && recipes.length > 0 && (
         <div className="space-y-6">
           <h2 className="text-2xl font-semibold mb-4">Recommended Recipes</h2>
           {recipes.map((recipe) => (
@@ -107,8 +113,11 @@ function Home() {
               key={recipe.id}
               recipe={recipe}
               onFavoriteClick={handleAddToFavorites}
+              onViewDetailsClick={handleViewRecipeDetails}
               buttonText="Add to Favorites"
+              detailsButtonText="View Recipe"
               buttonClassName="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+              detailsButtonClassName="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
             />
           ))}
         </div>
