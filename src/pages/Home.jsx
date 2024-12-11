@@ -3,7 +3,6 @@ import SearchForm from '../components/SearchForm';
 import RecipeCard from '../components/RecipeCard';
 import { saveToLocalStorage, loadFromLocalStorage } from '../utils/localStorage';
 
-// TODO Replace with actual API call
 const SPOONACULAR_API_KEY = import.meta.env.VITE_SPOONACULAR_API_KEY;
 const SPOONACULAR_BASE_URL = 'https://api.spoonacular.com/recipes/findByIngredients';
 
@@ -23,23 +22,36 @@ function Home() {
     setError(null);
 
     try {
-      const response = await fetch(`${SPOONACULAR_BASE_URL}?ingredients=${encodeURIComponent(ingredients)}&number=10&ranking=2&ignorePantry=true&apiKey=${SPOONACULAR_API_KEY}`);
+      const url = `${SPOONACULAR_BASE_URL}?ingredients=${encodeURIComponent(ingredients)}&number=10&ranking=2&ignorePantry=true&apiKey=${SPOONACULAR_API_KEY}`;
+      console.log('Request URL:', url);
+
+      const response = await fetch(url);
+      
+      console.log('Response status:', response.status);
       
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to fetch recipes');
+        const errorData = await response.text();
+        console.error('Error response:', errorData);
+        throw new Error(errorData || 'Failed to fetch recipes');
       }
 
       const data = await response.json();
       
-      // Transform Spoonacular API response to match our app's structure
+      console.log('Received data:', data);
+      
+      if (!data || data.length === 0) {
+        setError('No recipes found for the given ingredients');
+        setRecipes([]);
+        return;
+      }
+
       const transformedRecipes = data.map(recipe => ({
         id: recipe.id,
         title: recipe.title,
         image: recipe.image,
         usedIngredientCount: recipe.usedIngredientCount,
         missedIngredientCount: recipe.missedIngredientCount,
-        likes: recipe.likes
+        likes: recipe.likes || 0
       }));
 
       setRecipes(transformedRecipes);
@@ -56,7 +68,6 @@ function Home() {
     if (recipe) {
       const favorites = loadFromLocalStorage('favorites', []);
       
-      // Prevent duplicate favorites
       const isDuplicate = favorites.some(fav => fav.id === recipeId);
       if (!isDuplicate) {
         const updatedFavorites = [...favorites, recipe];
@@ -97,7 +108,7 @@ function Home() {
               recipe={recipe}
               onFavoriteClick={handleAddToFavorites}
               buttonText="Add to Favorites"
-              buttonClassName="text-blue-600 hover:text-blue-800"
+              buttonClassName="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
             />
           ))}
         </div>
